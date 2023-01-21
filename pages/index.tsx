@@ -15,7 +15,8 @@ const http = axios.create({
     // 'Content-Type': 'text/plain'
   }
 })
-// const back_num = new Array ()
+var place=-1
+const back_num = new Array ()
 export default function Home() {
   const [fetchedMessage, setFetchedMessage] = useState([""]);
   let get_quiz = async () => {
@@ -29,8 +30,8 @@ export default function Home() {
     text[1] = data.answer1
     text[2] = data.answer2
     text[3] = data.correct_answer
-    const list_ba=new Array
-    // back_num.push(text)
+    back_num.push(text)
+    place+=1
     setFetchedMessage(text)
     if (typeof document !== 'undefined') { document.getElementById("answer_T")!.style.display = "none" };
     if (typeof document !== 'undefined') { document.getElementById("answer_F")!.style.display = "none" };
@@ -40,12 +41,17 @@ export default function Home() {
     choice_1.style.display = "inline";
     choice_2.style.display = "inline";
     };
-    // console.log(back_num)
-    // console.log(back_num)
-  // let past_quiz = ()=>{
-  //   const shown_quiz= back_num[-1]
-  //   setFetchedMessage(shown_quiz)
-  // }
+    console.log(place)
+    console.log(back_num)
+  let past_quiz = ()=>{
+    const shown_quiz=new Array(4) 
+    shown_quiz[0]=back_num[place-1][0]
+    shown_quiz[1]=back_num[place-1][1]
+    shown_quiz[2]=back_num[place-1][2]
+    shown_quiz[3]=back_num[place-1][3]
+    console.log(fetchedMessage)
+    setFetchedMessage(shown_quiz)
+  }
   let judg_answer = async (e: any) => {
     // console.log(e.target.innerText);
     const choice_1 = document.getElementById("choice_1")!;
@@ -81,6 +87,7 @@ export default function Home() {
             };
             if (event.dir=="Up"){
               get_quiz()
+
             }
           }else{
             // if (p.code =="ArrowLeft" || event.dir=="Left"){
@@ -101,9 +108,9 @@ export default function Home() {
                   get_quiz()
                 // })
               };
-                // if (event.dir =="Down"){
-                //   past_quiz()
-                // }
+                if (event.dir =="Down"){
+                  past_quiz()
+                }
               
             }
           }
