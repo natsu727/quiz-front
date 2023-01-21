@@ -21,7 +21,7 @@ export default function Home() {
   const [fetchedMessage, setFetchedMessage] = useState([""]);
   let get_quiz = async () => {
     // const res = await http.get("/user/1");
-    const res = await http.get("/quiz");
+    const res = await http.get("api/quiz/1");
     const data = JSON.parse(JSON.stringify(res.data));
     // const text = new Array(4);
     const text = new Array(4);
@@ -32,7 +32,7 @@ export default function Home() {
     text[3] = data.correct_answer
     back_num.push(text)
     place+=1
-    setFetchedMessage(text)
+    setFetchedMessage(back_num[place])
     if (typeof document !== 'undefined') { document.getElementById("answer_T")!.style.display = "none" };
     if (typeof document !== 'undefined') { document.getElementById("answer_F")!.style.display = "none" };
     if (typeof document !== 'undefined') { document.getElementById("reload")!.style.display = "none" };
@@ -45,12 +45,40 @@ export default function Home() {
     console.log(back_num)
   let past_quiz = ()=>{
     const shown_quiz=new Array(4) 
-    shown_quiz[0]=back_num[place-1][0]
-    shown_quiz[1]=back_num[place-1][1]
-    shown_quiz[2]=back_num[place-1][2]
-    shown_quiz[3]=back_num[place-1][3]
+    place-=1
+    shown_quiz[0]=back_num[place][0]
+    shown_quiz[1]=back_num[place][1]
+    shown_quiz[2]=back_num[place][2]
+    shown_quiz[3]=back_num[place][3]
     console.log(fetchedMessage)
     setFetchedMessage(shown_quiz)
+    if (typeof document !== 'undefined') { document.getElementById("answer_T")!.style.display = "none" };
+    if (typeof document !== 'undefined') { document.getElementById("answer_F")!.style.display = "none" };
+    if (typeof document !== 'undefined') { document.getElementById("reload")!.style.display = "none" };
+    const choice_1 = document.getElementById("choice_1")!;
+    const choice_2 = document.getElementById("choice_2")!;
+    choice_1.style.display = "inline";
+    choice_2.style.display = "inline";
+  }
+  const old_quiz = ()=>{
+    place+=1
+    setFetchedMessage(back_num[place])
+    if (typeof document !== 'undefined') { document.getElementById("answer_T")!.style.display = "none" };
+    if (typeof document !== 'undefined') { document.getElementById("answer_F")!.style.display = "none" };
+    if (typeof document !== 'undefined') { document.getElementById("reload")!.style.display = "none" };
+    const choice_1 = document.getElementById("choice_1")!;
+    const choice_2 = document.getElementById("choice_2")!;
+    choice_1.style.display = "inline";
+    choice_2.style.display = "inline";
+  }
+  const retry_quiz=()=>{
+    if (typeof document !== 'undefined') { document.getElementById("answer_T")!.style.display = "none" };
+    if (typeof document !== 'undefined') { document.getElementById("answer_F")!.style.display = "none" };
+    if (typeof document !== 'undefined') { document.getElementById("reload")!.style.display = "none" };
+    const choice_1 = document.getElementById("choice_1")!;
+    const choice_2 = document.getElementById("choice_2")!;
+    choice_1.style.display = "inline";
+    choice_2.style.display = "inline";
   }
   let judg_answer = async (e: any) => {
     // console.log(e.target.innerText);
@@ -86,9 +114,18 @@ export default function Home() {
               // 正解表示後の右スワイプイベント
             };
             if (event.dir=="Up"){
-              get_quiz()
-
-            }
+              if (place+1 < back_num.length){
+                retry_quiz()
+              }else{
+                get_quiz()
+              };
+            };
+            if (event.dir =="Down"){
+              if (place==0){
+              }else{
+                past_quiz()
+              }
+          }
           }else{
             // if (p.code =="ArrowLeft" || event.dir=="Left"){
               if (event.dir=="Left"){
@@ -104,14 +141,19 @@ export default function Home() {
               };
               // if (event.dir == "Up" || p.code =="ArrowDown"){
                 if (event.dir == "Up"){
-                  // past_quiz()
-                  get_quiz()
-                // })
+                  if (place+1 < back_num.length){
+                    old_quiz()
+                  }else{
+                    get_quiz()
+                  };
               };
                 if (event.dir =="Down"){
-                  past_quiz()
+                    if (place==0){
+                    }else{
+                      past_quiz()
+                    }
                 }
-              
+                
             }
           }
           ,
@@ -143,10 +185,10 @@ export default function Home() {
                 <p id='answer_F'>不正解</p>
               </h1>
               <h2 id="choice_1" onClick={(e) => judg_answer(e)}>
-              ←{fetchedMessage[1]}
+              ←{fetchedMessage[2]}
               </h2>
               <h2 id='choice_2' onClick={(e) => judg_answer(e)}>
-                {fetchedMessage[2]}→
+                {fetchedMessage[1]}→
               </h2>
               <h2 id='reload'  onClick={() => get_quiz()}>
                 next Quiz
